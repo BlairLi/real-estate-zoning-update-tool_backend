@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/parcels")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ParcelController {
     @Autowired
     private ParcelService parcelService;

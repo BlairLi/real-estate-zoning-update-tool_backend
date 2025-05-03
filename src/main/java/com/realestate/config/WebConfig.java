@@ -10,11 +10,12 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
             .allowedOrigins(
-                "http://localhost:3000",
-                "https://your-vercel-app.vercel.app"  // Replace with your Vercel URL
+                "http://localhost:3000",  // Development
+                "https://real-estate-zoning-update-tool.vercel.app"  // Production
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")
-            .allowCredentials(true);
+            .allowCredentials(true)
+            .maxAge(3600); // 1 hour cache for CORS preflight requests
     }
 } 

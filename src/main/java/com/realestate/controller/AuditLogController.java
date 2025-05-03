@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/audit-logs")
-@CrossOrigin(origins = "http://localhost:3000")
 public class AuditLogController {
     @Autowired
     private ZoningAuditLogRepository auditLogRepository;
