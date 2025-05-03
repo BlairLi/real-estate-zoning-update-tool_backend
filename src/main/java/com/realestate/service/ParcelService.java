@@ -34,10 +34,14 @@ public class ParcelService {
         logger.info("Starting zoning update for {} parcels to {}", parcelIds.size(), zoningType);
         
         if (parcelIds == null || parcelIds.isEmpty()) {
-            throw new IllegalArgumentException("Parcel IDs list cannot be empty");
+            String errorMessage = "Parcel IDs list cannot be empty";
+            createAuditLog("UPDATE_ZONING_ERROR", 0, zoningType, errorMessage);
+            throw new IllegalArgumentException(errorMessage);
         }
         if (zoningType == null || zoningType.trim().isEmpty()) {
-            throw new IllegalArgumentException("Zoning type cannot be empty");
+            String errorMessage = "Zoning type cannot be empty";
+            createAuditLog("UPDATE_ZONING_ERROR", 0, zoningType, errorMessage);
+            throw new IllegalArgumentException(errorMessage);
         }
 
         // Check if any parcels already have the target zoning type
@@ -53,15 +57,7 @@ public class ParcelService {
                     .map(String::valueOf)
                     .collect(Collectors.joining(", "));
             
-            // Log the error
-            ZoningAuditLog auditLog = new ZoningAuditLog();
-            auditLog.setActionTimestamp(ZonedDateTime.now());
-            auditLog.setActionType("UPDATE_ZONING_ERROR");
-            auditLog.setAffectedParcels(alreadyUpdatedParcels.size());
-            auditLog.setNewZoningType(zoningType);
-            auditLog.setDetails(errorMessage);
-            auditLogRepository.save(auditLog);
-            
+            createAuditLog("UPDATE_ZONING_ERROR", alreadyUpdatedParcels.size(), zoningType, errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
 
@@ -83,27 +79,40 @@ public class ParcelService {
             }
         }
 
-        // Create audit log entry
-        try {
-            ZoningAuditLog auditLog = new ZoningAuditLog();
-            auditLog.setActionTimestamp(ZonedDateTime.now());
-            auditLog.setActionType("UPDATE_ZONING");
-            auditLog.setAffectedParcels(updatedCount);
-            auditLog.setNewZoningType(zoningType);
-            auditLog.setDetails("Updated " + updatedCount + " parcels to " + zoningType + 
-                (errors.isEmpty() ? "" : ". Errors: " + String.join(", ", errors)));
-            
-            ZoningAuditLog savedLog = auditLogRepository.save(auditLog);
-            logger.info("Created audit log entry with ID: {}", savedLog.getId());
-        } catch (Exception e) {
-            logger.error("Failed to create audit log: {}", e.getMessage());
-            throw new RuntimeException("Failed to create audit log", e);
+        // Create audit log entry for the update attempt
+        String details = "Updated " + updatedCount + " parcels to " + zoningType;
+        if (!errors.isEmpty()) {
+            details += ". Errors: " + String.join(", ", errors);
         }
+        
+        createAuditLog(
+            errors.isEmpty() ? "UPDATE_ZONING_SUCCESS" : "UPDATE_ZONING_PARTIAL",
+            updatedCount,
+            zoningType,
+            details
+        );
 
         if (!errors.isEmpty()) {
             throw new RuntimeException("Failed to update some parcels: " + String.join(", ", errors));
         }
         
         logger.info("Successfully completed zoning update for {} parcels", updatedCount);
+    }
+
+    private void createAuditLog(String actionType, int affectedParcels, String zoningType, String details) {
+        try {
+            ZoningAuditLog auditLog = new ZoningAuditLog();
+            auditLog.setActionTimestamp(ZonedDateTime.now());
+            auditLog.setActionType(actionType);
+            auditLog.setAffectedParcels(affectedParcels);
+            auditLog.setNewZoningType(zoningType);
+            auditLog.setDetails(details);
+            
+            ZoningAuditLog savedLog = auditLogRepository.save(auditLog);
+            logger.info("Created audit log entry with ID: {} for action type: {}", savedLog.getId(), actionType);
+        } catch (Exception e) {
+            logger.error("Failed to create audit log: {}", e.getMessage());
+            throw new RuntimeException("Failed to create audit log", e);
+        }
     }
 } 
