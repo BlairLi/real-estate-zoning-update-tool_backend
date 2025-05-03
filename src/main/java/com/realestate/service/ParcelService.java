@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class ParcelService {
@@ -37,6 +38,31 @@ public class ParcelService {
         }
         if (zoningType == null || zoningType.trim().isEmpty()) {
             throw new IllegalArgumentException("Zoning type cannot be empty");
+        }
+
+        // Check if any parcels already have the target zoning type
+        List<Parcel> parcels = parcelRepository.findAllById(parcelIds);
+        List<Long> alreadyUpdatedParcels = parcels.stream()
+            .filter(p -> zoningType.equals(p.getZoningType()))
+            .map(Parcel::getId)
+            .collect(Collectors.toList());
+
+        if (!alreadyUpdatedParcels.isEmpty()) {
+            String errorMessage = "The following parcels already have zoning type '" + zoningType + "': " + 
+                alreadyUpdatedParcels.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(", "));
+            
+            // Log the error
+            ZoningAuditLog auditLog = new ZoningAuditLog();
+            auditLog.setActionTimestamp(ZonedDateTime.now());
+            auditLog.setActionType("UPDATE_ZONING_ERROR");
+            auditLog.setAffectedParcels(alreadyUpdatedParcels.size());
+            auditLog.setNewZoningType(zoningType);
+            auditLog.setDetails(errorMessage);
+            auditLogRepository.save(auditLog);
+            
+            throw new IllegalArgumentException(errorMessage);
         }
 
         List<String> errors = new ArrayList<>();
