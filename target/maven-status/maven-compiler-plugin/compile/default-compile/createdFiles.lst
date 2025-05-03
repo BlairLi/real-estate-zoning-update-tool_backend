@@ -1,0 +1,13 @@
+com/realestate/service/ParcelService.class
+com/realestate/config/DataLoaderConfig.class
+com/realestate/config/JacksonConfig.class
+com/realestate/model/Parcel.class
+com/realestate/util/DataLoader.class
+com/realestate/controller/AuditLogController.class
+com/realestate/RealEstateApplication.class
+com/realestate/model/ZoningAuditLog.class
+com/realestate/repository/ParcelRepository.class
+com/realestate/controller/ParcelController.class
+com/realestate/dto/ZoningUpdateRequest.class
+com/realestate/repository/ZoningAuditLogRepository.class
+com/realestate/config/WebConfig.class

@@ -1,0 +1,13 @@
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/util/DataLoader.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/controller/AuditLogController.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/dto/ZoningUpdateRequest.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/config/WebConfig.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/controller/ParcelController.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/repository/ZoningAuditLogRepository.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/repository/ParcelRepository.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/RealEstateApplication.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/model/ZoningAuditLog.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/model/Parcel.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/config/JacksonConfig.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/config/DataLoaderConfig.java
+/Users/yucanli/Desktop/real-estate-zoning-update-tool_backend/src/main/java/com/realestate/service/ParcelService.java
